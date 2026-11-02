@@ -1,0 +1,11 @@
+__pycache__/
+.DS_Store
+.claude/
+# outputs of reproduce.py
+figures/
+weights/retrained_*
+weights/reduction/
+data/*_recomputed.npz
+data/map_timing_mc_rerun_2d.npz
+# experimental data, never committed
+data/trials_*.npz
