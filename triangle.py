@@ -35,7 +35,7 @@ def reduce_inputs(Sigma_x, Sigma_y, mu_x, mu_y):
     M = jnp.linalg.inv(jnp.linalg.cholesky(S))              # M S M^T = I
     A = M @ Sigma_x @ jnp.swapaxes(M, -1, -2)                # whitened Sigma_x
     lam, V = jnp.linalg.eigh(A)                              # ascending
-    lam, V = lam[:, ::-1], V[:, :, ::-1]                     # descending, Remark 1
+    lam, V = lam[:, ::-1], V[:, :, ::-1]                     # descending, Remark 2
     delta = jnp.einsum('nij,nj->ni', M, mu_y - mu_x)
     eta = jnp.abs(jnp.einsum('nji,nj->ni', V, delta))       # |V^T M (mu_y - mu_x)|
     return jnp.concatenate([lam, eta], axis=-1)
