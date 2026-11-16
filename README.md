@@ -28,7 +28,7 @@ numpy 2.4, scipy 1.17, optax 0.2.6).
 | `example.py` | evaluating `p_tri` and `p_duo` for a few random trials, beside Monte Carlo and quadrature |
 | `triangle.py` | `p_tri` for the triangle test: the exact reduction to 2d arguments (Section 3.1) and the 2d-16-16-1 network for the reduced function (Section 3.2); a Monte Carlo simulator of the trial for the checks |
 | `duotrio.py` | `p_duo` for the duo-trio test with equal covariances: the one-dimensional integral (Claim 3), its Chebyshev expansion (Section 4.1), and the checks the paper quotes |
-| `wishart.py` | the covariance-field model of hong2026 and the two log posteriors of the MAP comparison, with `p_tri` from the network and by Monte Carlo (Figure 3) |
+| `wishart.py` | the covariance-field model of hong2026 and the two log posteriors of the MAP comparison, with `p_tri` from the network and by Monte Carlo (Figure 4) |
 | `reproduce.py` | prints every number in the paper beside the value computed here, and draws the three figures into `figures/` |
 | `weights/` | the two networks the paper reports: 369 parameters for d = 2, 401 for d = 3 |
 | `data/` | the frozen test and selection sets (4992 points each, labels at n = 1e7), the training sets (300000 points each at n = 1e5), and the cached fits of the MAP comparison |

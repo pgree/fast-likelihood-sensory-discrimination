@@ -6,10 +6,10 @@ The default run takes about five minutes:
 
   accuracy   the networks against the frozen test sets (Section 3.2)
   timing     evaluation time of the reduced network, of a network on the
-             original arguments, and of Monte Carlo; Figure 2
+             original arguments, and of Monte Carlo; Figure 3
   duotrio    the Chebyshev expansion: truncation radius, node count, error,
-             the Ennis-Johnson term count, timings; Figure 4 (Section 4)
-  map        the MAP comparison on the trials of hong2026 (Figure 3): the
+             the Ennis-Johnson term count, timings; Figure 5 (Section 4)
+  map        the MAP comparison on the trials of hong2026 (Figure 4): the
              fast-likelihood arm is refit here, the Monte Carlo arm is read
              from the cached 44 minute run unless --map-mc.  The trials are
              experimental data and are not included; pass them with
@@ -20,7 +20,7 @@ Flags for the long runs, off by default:
 
   --tail          remeasure 1 - h on the ray that sets R (Section 3.2); about a minute
   --train         retrain the two networks, 15 min each; writes weights/retrained_*
-  --reduction     retrain the networks on the original arguments of Figure 2, 1-2 h
+  --reduction     retrain the networks on the original arguments of Figure 3, 1-2 h
   --map-mc        rerun the Monte Carlo arm of the MAP comparison, 44 min
   --map-score     rescore the MAP end points by Monte Carlo at 1e5 samples per trial
   --map-restarts  redo the search for theta*: 200 L-BFGS-B fits from prior draws, 3 min
@@ -114,7 +114,7 @@ def accuracy(d):
     line('sd of a reference value, bound and rms', '<= 1.6e-4',
          f'{np.sqrt(0.25 / spec["n_mc"]):.2e}, {np.sqrt((y * (1 - y)).mean() / spec["n_mc"]):.2e}')
     es, _ = errors(net, f'bench_selection_{d}d')
-    line('rms on the selection set (Figure 2)', q['sel'], f'{np.sqrt((es ** 2).mean()):.3e}')
+    line('rms on the selection set (Figure 3)', q['sel'], f'{np.sqrt((es ** 2).mean()):.3e}')
     zt = np.load(os.path.join(DATA, f'train_domain_radial_{d}d.npz'))
     yt, n_mc = zt['train_labels'], int(zt['n_mc'])
     line(f'training labels: {len(yt)} points at n = {n_mc:.0e}, rms sd', q['lab'],
@@ -201,11 +201,11 @@ def timing():
     f3 = jax.jit(lambda a, b, c, e: T.p_tri(a, b, c, e, net3))
     print(f'd = 3: reduced network with cholesky and eigh {timeit(f3, Sx3, Sy3, mx3, my3) / K * 1e6:.3f} us (not quoted)')
 
-    # Figure 2: errors on the selection set against parameters and against time
+    # Figure 3: errors on the selection set against parameters and against time
     es, zs = errors(net, 'bench_selection_2d')
     rms_red = float(np.sqrt((es ** 2).mean()))
     ladder, src = ladder_errors()
-    print(f'  Figure 2 uses the errors of the networks on the original arguments from {src}')
+    print(f'  Figure 3 uses the errors of the networks on the original arguments from {src}')
     mc_rms = []
     for n in N_MC:                       # one n-sample estimate at each selection point
         p = T.p_tri_mc(*T.canonical(zs['X']), jax.random.PRNGKey(2 + n), n, chunk=10_000)
@@ -275,9 +275,9 @@ def duotrio():
     r_ref = r[:400]
     ref = np.array([D.pduo_quad(v, 3, D.QUAD_FLOOR) for v in r_ref])
     err = float(np.sqrt(np.mean((D.evaluate(r_ref, coef, R) - ref) ** 2)))
-    line('rms of the expansion against quadrature, 400 points', '-', f'{err:.1e}', '(Figure 4)')
+    line('rms of the expansion against quadrature, 400 points', '-', f'{err:.1e}', '(Figure 5)')
 
-    # Figure 4: Monte Carlo, both axes measured; 20 estimates at each reference point
+    # Figure 5: Monte Carlo, both axes measured; 20 estimates at each reference point
     reps = 20
     mc = []
     for n_mc in N_MC_DUO:
@@ -314,10 +314,10 @@ def map_comparison(trials_, rerun_mc=False, rescore=False, restarts=False):
     W_star, W0 = jnp.asarray(z['W_star']), jnp.asarray(z['W0'])
     L_star = float(log_posterior(W_star))
 
-    def gap(W):          # log p(theta* | y) - log p(theta | y), Figure 3a
+    def gap(W):          # log p(theta* | y) - log p(theta | y), Figure 4a
         return L_star - float(log_posterior(jnp.asarray(W)))
 
-    def dist(W):         # relative error in Sigma(x) over the grid, Figure 3b
+    def dist(W):         # relative error in Sigma(x) over the grid, Figure 4b
         return M.field_distance(jnp.asarray(W), W_star, x)
 
     y = trials_[0]
@@ -366,7 +366,7 @@ def map_comparison(trials_, rerun_mc=False, rescore=False, restarts=False):
         line('best of 200 restarts, log posterior', f'{L_star:.4f}', f'{-vals.min():.4f}',
          f'({(vals <= vals.min() + 0.01).sum()} of 200 within 0.01 nats; {time.time() - t0:.0f} s)')
 
-    # Figure 3: both arms along their recorded runs; the fast arm is the refit above
+    # Figure 4: both arms along their recorded runs; the fast arm is the refit above
     ax_g, save_g = figure('map_timing_gap.pdf')
     ax_s, save_s = figure('map_timing_sigma.pdf')
     for run, colour, label, wall in ((mc_run, 'tab:green', 'MC likelihood', mc_run['wall'][mc_run['snap_step']]),
@@ -499,7 +499,7 @@ def raw_inputs(X, rng):
 
 
 def reduction():
-    """Figure 2: the networks on the original arguments, same labels and budget, d = 2."""
+    """Figure 3: the networks on the original arguments, same labels and budget, d = 2."""
     z = np.load(os.path.join(DATA, 'train_domain_radial_2d.npz'))
     b = np.load(os.path.join(DATA, 'bench_selection_2d.npz'))
     rng = np.random.default_rng(7)
@@ -537,13 +537,13 @@ def main():
         for d in (2, 3):
             accuracy(d)
     if 'timing' in args.only:
-        print('\n=== evaluation time (Section 3.2, Figure 2)')
+        print('\n=== evaluation time (Section 3.2, Figure 3)')
         timing()
     if 'duotrio' in args.only:
-        print('\n=== duo-trio expansion (Section 4, Figure 4)')
+        print('\n=== duo-trio expansion (Section 4, Figure 5)')
         duotrio()
     if 'map' in args.only or args.map_mc or args.map_score or args.map_restarts:
-        print('\n=== MAP comparison (Figure 3)')
+        print('\n=== MAP comparison (Figure 4)')
         if args.trials is None:
             print('  skipped: the trials of hong2026 are not included; pass them with --trials PATH')
         else:
@@ -558,7 +558,7 @@ def main():
         for d in (2, 3):
             train(d)
     if args.reduction:
-        print('\n=== networks on the original arguments (Figure 2)')
+        print('\n=== networks on the original arguments (Figure 3)')
         reduction()
 
 

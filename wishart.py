@@ -1,4 +1,4 @@
-"""The covariance-field model of hong2026 and the two fits of Figure 3, d = 2.
+"""The covariance-field model of hong2026 and the two fits of Figure 4, d = 2.
 
     Sigma(x) = U(x) U(x)^T + diag_term I,    U(x) = sum_{a,b} W_{ab} T_a(x_1) T_b(x_2),
 

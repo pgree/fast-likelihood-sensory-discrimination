@@ -1,6 +1,7 @@
 # Supertests
 
-A supertest is a Python function that states a property with `assume(...)` and
+A supertest (see [Schematic](https://schematic.tech)) is a Python function that states a 
+property with `assume(...)` and
 `assert ...`. [Schematic's Super](https://docs.schematic.tech/super)
 either proves that the assertion holds for every input the
 `assume` admits, or returns an input where it fails.
