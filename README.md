@@ -1,6 +1,6 @@
 # Fast likelihood evaluation for multivariate sensory discrimination models
 
-Code and data that implement the algorithms in and reproduce the figures in
+Code and data that implement the algorithms and reproduce the figures in
 
 > P. Greengard, D. H. Brainard, F. Hong, A. Williams. Fast likelihood
 > evaluation for multivariate sensory discrimination models. arXiv:XXXX.XXXXX, 2026.
